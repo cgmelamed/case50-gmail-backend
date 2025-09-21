@@ -1,5 +1,4 @@
 // api/callback.js - Handles OAuth callback and exchanges code for tokens
-import axios from 'axios';
 
 export default async function handler(req, res) {
   const { code, error } = req.query;
@@ -15,19 +14,24 @@ export default async function handler(req, res) {
 
   try {
     // Exchange authorization code for tokens
-    const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
+    const params = new URLSearchParams({
       code,
       client_id: process.env.GOOGLE_CLIENT_ID,
       client_secret: process.env.GOOGLE_CLIENT_SECRET,
       redirect_uri: 'https://case50-gmail-backend.vercel.app/api/callback',
       grant_type: 'authorization_code'
-    }, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
     });
 
-    const { access_token, refresh_token } = tokenResponse.data;
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: params.toString()
+    });
+
+    const tokenData = await tokenResponse.json();
+    const { access_token, refresh_token } = tokenData;
 
     // Create a success page that redirects to the app with tokens
     const html = `
@@ -95,10 +99,10 @@ export default async function handler(req, res) {
     res.status(200).send(html);
 
   } catch (error) {
-    console.error('Token exchange error:', error.response?.data || error.message);
+    console.error('Token exchange error:', error);
     res.status(500).json({
       error: 'Failed to exchange authorization code',
-      details: error.response?.data || error.message
+      details: error.message
     });
   }
 }
