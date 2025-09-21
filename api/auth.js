@@ -1,7 +1,7 @@
 // api/auth.js - Initiates OAuth flow
 export default function handler(req, res) {
   const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-  const REDIRECT_URI = `${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'http://localhost:3000'}/api/callback`;
+  const REDIRECT_URI = 'https://case50-gmail-backend.vercel.app/api/callback';
 
   const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
   authUrl.searchParams.append('client_id', CLIENT_ID);

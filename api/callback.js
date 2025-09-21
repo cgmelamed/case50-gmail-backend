@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       code,
       client_id: process.env.GOOGLE_CLIENT_ID,
       client_secret: process.env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: `${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'http://localhost:3000'}/api/callback`,
+      redirect_uri: 'https://case50-gmail-backend.vercel.app/api/callback',
       grant_type: 'authorization_code'
     }, {
       headers: {
